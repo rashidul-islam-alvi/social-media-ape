@@ -1,6 +1,10 @@
 /** @format */
 
-const { validationSignUp, validationLogIn } = require("../validation");
+const {
+  validationSignUp,
+  validationLogIn,
+  reduceUserDetails,
+} = require("../validation");
 const { db, admin } = require("../util/admin");
 const firebaseConfig = require("../util/config");
 const uuid = require("uuidv4");
@@ -180,6 +184,22 @@ exports.getOwnUserDetails = (req, res) => {
         });
       });
       return res.json(ownUserDetails);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
+};
+
+//add user details
+
+exports.addUserDetails = (req, res) => {
+  let userDetails = reduceUserDetails(req.body);
+
+  db.doc(`/users/${req.user.handle}`)
+    .update(userDetails)
+    .then(() => {
+      return res.json({ message: "Details added successfully" });
     })
     .catch((err) => {
       console.error(err);
