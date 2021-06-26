@@ -3,49 +3,37 @@
 // //importing required things
 
 const functions = require("firebase-functions");
+const {
+  getAllScreams,
+  postOneScream,
+  getOneScream,
+  commentOnScream,
+  likeOnScream,
+} = require("./handlers/screams");
+const {
+  signUp,
+  logIn,
+  getUserDetails,
+  uploadImage,
+  getOwnUserDetails,
+} = require("./handlers/users");
+const FbAuth = require("./util/FbAuth");
 const app = require("express")();
-const { getAllScreams } = require("./handler/screams");
 
-//utilAndHandle
-
-// const {
-//   getAllScreams,
-//   postOneScream,
-//   getOneScream,
-//   commentOnScream,
-//   likeOnScream,
-// } = require("./handler/screams");
-
-// const {
-//   signUp,
-//   logIn,
-//   uploadImage,
-//   getUserDetails,
-//   getOwnUserDetails,
-// } = require("./handler/users");
-// const FbAuth = require("./util/FbAuth");
+//scream Route
 
 app.get("/screams", getAllScreams);
+app.post("/scream", FbAuth, postOneScream);
+app.get("/scream/:screamId", getOneScream);
+app.post("/scream/:screamId/comment", FbAuth, commentOnScream);
+app.post("/scream/:screamId/like", FbAuth, likeOnScream);
 
-// //signUp Route
+//user Route
 
-// app.post("/signUp", signUp);
-// app.post("/logIn", logIn);
-// app.post("/user/image", FbAuth, uploadImage);
-// app.get("/users/:handle", getUserDetails);
-// app.get("/user", FbAuth, getOwnUserDetails);
-
-// //screamroute
-
-// app.post("/scream", FbAuth, postOneScream);
-// app.get("/screams/:screamId", getOneScream);
-// app.post("/scream/:screamId/comment", FbAuth, commentOnScream);
-// app.get("/scream/:screamId/like", FbAuth, likeOnScream);
-// app.get("/scream/:screamId/unlike", FBAuth, unlikeScream);
-// app.delete("/scream/:screamId", FBAuth, deleteScream);
-
-app.get("/", (req, res) => {
-  res.send("hello");
-});
+app.post("/singUp", signUp);
+app.post("/logIn", logIn);
+app.get("/user/:handle", FbAuth, getUserDetails);
+app.post("/user/image", FbAuth, uploadImage);
+app.get("/user", FbAuth, getOwnUserDetails);
 
 exports.api = functions.https.onRequest(app);
